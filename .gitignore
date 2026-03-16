@@ -151,3 +151,18 @@ configs/config.json
 filelists/test.txt
 filelists/train.txt
 filelists/val.txt
+
+# Local runtime / export artifacts
+hubert_tmp/
+logs/exports_tmp/
+logs/webui_train_state.json
+logs/webui_prepared_models.json
+dataset.zip
+configs.zip
+filelists.zip
+*_dataset.zip
+*_configs.zip
+*_filelists.zip
+tmp_test.wav
+temp.wav
+*.bak

@@ -36,11 +36,15 @@ if __name__ == "__main__":
     parser.add_argument("--sr2", type=int, default=44100, help="sampling rate")
     parser.add_argument("--in_dir", type=str, default="./dataset_raw", help="path to source dir")
     parser.add_argument("--out_dir2", type=str, default="./dataset/44k", help="path to target dir")
+    parser.add_argument("--speaker_filter", type=str, default="", help="process only one speaker folder name")
     args = parser.parse_args()
     processs = 30 if cpu_count() > 60 else (cpu_count()-2 if cpu_count() > 4 else 1)
     pool = Pool(processes=processs)
-
-    for speaker in os.listdir(args.in_dir):
+    if args.speaker_filter:
+        speakers = [args.speaker_filter]
+    else:
+        speakers = os.listdir(args.in_dir)
+    for speaker in speakers:
         spk_dir = os.path.join(args.in_dir, speaker)
         if os.path.isdir(spk_dir):
             print(spk_dir)

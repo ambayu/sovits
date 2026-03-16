@@ -1,4 +1,2 @@
-./dataset/44k/nyaru/000003.wav
-./dataset/44k/nyaru/000007.wav
-./dataset/44k/taffy/000558.wav
-./dataset/44k/taffy/000556.wav
+./dataset/44k/Kobo_Kanaeru/1_ACOUSTIC KARAOKEMONETIZATION CELEBRATION_ THANK YOU__ PART 2_____Kobo Kanaeru _ hololive ID zzDtTiE71q0_Vocals_0057.wav
+./dataset/44k/Kobo_Kanaeru/1_ACOUSTIC KARAOKEMONETIZATION CELEBRATION_ THANK YOU__ PART 2_____Kobo Kanaeru _ hololive ID zzDtTiE71q0_Vocals_0377.wav

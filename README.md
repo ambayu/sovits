@@ -63,6 +63,132 @@ The singing voice conversion model uses SoftVC content encoder to extract source
 
 After conducting tests, we believe that the project runs stably on `Python 3.8.9`.
 
+## Quick Guide (GitHub + Pindah Laptop + Colab)
+
+### 1) Bisa disimpan ke GitHub?
+
+Bisa. Untuk repo ini, file besar (dataset/model) sudah di-ignore oleh `.gitignore`.
+
+Aman di-commit:
+- `webUI.py`, `utils.py`, script `.py` lain
+- `requirements.txt`, `requirements_win.txt`
+- notebook/README/config template
+
+Jangan di-commit:
+- `dataset_raw/`, `dataset/`, `logs/`, `raw/`
+- model besar (`.pth`, HuBERT checkpoint), zip dataset besar
+
+### 2) Supaya bisa lanjut di laptop lain (tanpa bingung step mana)
+
+Checklist cepat:
+
+1. Clone repo.
+2. Install Python dan dependency.
+3. Pastikan file wajib ada.
+4. Jalankan step pipeline dari awal yang belum selesai.
+
+Contoh (Windows PowerShell):
+
+```powershell
+python -V
+python -m pip install -r requirements_win.txt
+python -m pip install tensorboard "setuptools<81"
+```
+
+Catatan:
+- Jika pakai NVIDIA GPU lokal, training bisa dijalankan lokal.
+- Jika tidak ada CUDA/NVIDIA (mis. AMD-only), lakukan training di Google Colab (GPU T4/A100/L4).
+
+### 3) Cara tahu “yang kurang” saat dijalankan ulang
+
+Cek cepat status file penting:
+
+```powershell
+# HuBERT wajib
+Test-Path .\hubert\checkpoint_best_legacy_500.pt
+
+# Hitung data hasil preprocess (contoh speaker Kobo_Kanaeru)
+$w=(Get-ChildItem .\dataset\44k\Kobo_Kanaeru -Filter *.wav | Measure-Object).Count
+$s=(Get-ChildItem .\dataset\44k\Kobo_Kanaeru -Filter *.soft.pt | Measure-Object).Count
+$f=(Get-ChildItem .\dataset\44k\Kobo_Kanaeru -Filter *.f0.npy | Measure-Object).Count
+"wav=$w soft=$s f0=$f"
+```
+
+Interpretasi:
+- `wav == soft == f0` -> step preprocessing sudah lengkap.
+- `soft`/`f0` lebih kecil dari `wav` -> ulang `preprocess_hubert_f0.py`.
+- HuBERT `False` -> download/checkpoint belum ada atau rusak.
+
+### 4) Urutan step paling sederhana (sesuai UI terbaru)
+
+Di `webUI.py`:
+
+1. `Audio Slicer` -> potong audio ke `dataset_raw/<nama_model>`.
+2. `Training Manager` -> klik **1) Siapkan Dataset Lokal (Step 1-3)**.
+3. (Opsional, direkomendasikan) klik **2) Sync Artifacts ke Google Drive (No Duplicate)**.
+4. Training:
+   - Lokal NVIDIA: jalankan step train lokal.
+   - AMD/no CUDA: lanjut di Colab.
+
+### 5) Alur Colab (untuk AMD / no-CUDA lokal)
+
+1. Buka notebook Colab, set runtime GPU (mis. T4).
+2. Mount Google Drive.
+3. Ambil artifacts per model dari folder sync.
+4. Jalankan training di Colab.
+5. Simpan hasil model (`logs/...`) kembali ke Drive.
+
+### 6) Struktur file sync per model (no-duplicate)
+
+Agar tidak campur semua suara:
+- `<model>_dataset.zip` (isi folder `dataset_<model>/...`)
+- `<model>_configs.zip`
+- `<model>_filelists.zip`
+
+Jika isi tidak berubah, sync akan skip (tidak upload ulang).
+
+### 7) Keadaan aplikasi saat ini (fork lokal ini)
+
+Ringkas status fitur yang sudah aktif:
+- Training Manager sudah **per-model** (pilih folder dari `dataset_raw` dulu).
+- Step lokal yang dijalankan dari UI: `resample -> filelist/config -> hubert/f0` (hanya untuk model terpilih).
+- Ada proteksi **jangan ulang tanpa sengaja**:
+  - status step disimpan di `logs/webui_train_state.json`
+  - model yang sudah siap disimpan di `logs/webui_prepared_models.json`
+- Sync Google Drive sudah **no-duplicate** + nama file per-model:
+  - `<model>_dataset.zip`
+  - `<model>_configs.zip`
+  - `<model>_filelists.zip`
+- Untuk mesin tanpa CUDA/NVIDIA (contoh AMD), training lokal memang ditolak dan diarahkan ke Colab GPU.
+
+### 8) Requirements minimum yang perlu diinstall
+
+Windows (lokal):
+
+```powershell
+python -V
+python -m pip install --upgrade pip
+python -m pip install -r requirements_win.txt
+python -m pip install tensorboard "setuptools<81"
+```
+
+File wajib:
+- `hubert/checkpoint_best_legacy_500.pt`
+
+Catatan versi:
+- README asli menyebut Python `3.8.9`.
+- Setup lokal kamu saat ini berjalan di Python `3.10` (sesuai log yang kamu kirim).
+
+### 9) Step harian paling aman (praktis)
+
+1. Taruh audio model baru ke `dataset_raw/<nama_model>/*.wav`.
+2. Buka `webUI.py` -> `Training Manager`.
+3. Pilih model di dropdown.
+4. Klik `1) Siapkan Dataset Lokal (Step 1-3)`.
+5. Klik `2) Sync Artifacts ke Google Drive (No Duplicate)`.
+6. Lanjut training di Colab (GPU T4/A100/L4).
+7. Simpan hasil model dari Colab ke Drive.
+
 ## 📥 Pre-trained Model Files
 
 #### **Required**

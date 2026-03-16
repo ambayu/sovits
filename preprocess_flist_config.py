@@ -26,6 +26,7 @@ if __name__ == "__main__":
     parser.add_argument("--train_list", type=str, default="./filelists/train.txt", help="path to train list")
     parser.add_argument("--val_list", type=str, default="./filelists/val.txt", help="path to val list")
     parser.add_argument("--source_dir", type=str, default="./dataset/44k", help="path to source dir")
+    parser.add_argument("--speaker_filter", type=str, default="", help="process only one speaker folder name")
     args = parser.parse_args()
     
     train = []
@@ -33,7 +34,14 @@ if __name__ == "__main__":
     idx = 0
     spk_dict = {}
     spk_id = 0
-    for speaker in tqdm(os.listdir(args.source_dir)):
+    if args.speaker_filter:
+        speakers = [args.speaker_filter]
+    else:
+        speakers = os.listdir(args.source_dir)
+    for speaker in tqdm(speakers):
+        if not os.path.isdir(os.path.join(args.source_dir, speaker)):
+            print(f"skip invalid speaker folder: {speaker}")
+            continue
         spk_dict[speaker] = spk_id
         spk_id += 1
         wavs = ["/".join([args.source_dir, speaker, i]) for i in os.listdir(os.path.join(args.source_dir, speaker))]

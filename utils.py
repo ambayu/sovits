@@ -211,10 +211,21 @@ def get_hubert_model():
   vec_path = "hubert/checkpoint_best_legacy_500.pt"
   print("load model(s) from {}".format(vec_path))
   from fairseq import checkpoint_utils
-  models, saved_cfg, task = checkpoint_utils.load_model_ensemble_and_task(
-    [vec_path],
-    suffix="",
-  )
+  # PyTorch >= 2.6 defaults torch.load(weights_only=True), while older fairseq
+  # checkpoints (like ContentVec) need full pickle loading.
+  _orig_torch_load = torch.load
+  def _torch_load_compat(*args, **kwargs):
+    if "weights_only" not in kwargs:
+      kwargs["weights_only"] = False
+    return _orig_torch_load(*args, **kwargs)
+  torch.load = _torch_load_compat
+  try:
+    models, saved_cfg, task = checkpoint_utils.load_model_ensemble_and_task(
+      [vec_path],
+      suffix="",
+    )
+  finally:
+    torch.load = _orig_torch_load
   model = models[0]
   model.eval()
   return model

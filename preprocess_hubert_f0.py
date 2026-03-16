@@ -82,9 +82,15 @@ if __name__ == "__main__":
     parser.add_argument(
         "--in_dir", type=str, default="dataset/44k", help="path to input dir"
     )
+    parser.add_argument(
+        "--speaker_filter", type=str, default="", help="process only one speaker folder name"
+    )
 
     args = parser.parse_args()
-    filenames = glob(f"{args.in_dir}/*/*.wav", recursive=True)  # [:10]
+    if args.speaker_filter:
+        filenames = glob(f"{args.in_dir}/{args.speaker_filter}/*.wav", recursive=True)
+    else:
+        filenames = glob(f"{args.in_dir}/*/*.wav", recursive=True)  # [:10]
     shuffle(filenames)
     multiprocessing.set_start_method("spawn", force=True)
 
