@@ -166,3 +166,8 @@ filelists.zip
 tmp_test.wav
 temp.wav
 *.bak
+.venv310/
+.tmp_fairseq/
+temp_rvc_entries.txt
+temp_rvc_model.zip
+testerfile/

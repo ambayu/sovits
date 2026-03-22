@@ -111,8 +111,13 @@ def plot_data_to_numpy(x, y):
     plt.tight_layout()
 
     fig.canvas.draw()
-    data = np.fromstring(fig.canvas.tostring_rgb(), dtype=np.uint8, sep='')
-    data = data.reshape(fig.canvas.get_width_height()[::-1] + (3,))
+    if hasattr(fig.canvas, "tostring_rgb"):
+        data = np.frombuffer(fig.canvas.tostring_rgb(), dtype=np.uint8)
+        data = data.reshape(fig.canvas.get_width_height()[::-1] + (3,))
+    else:
+        # Matplotlib 3.10+ removed tostring_rgb() on some Agg canvases.
+        rgba = np.asarray(fig.canvas.buffer_rgba())
+        data = np.ascontiguousarray(rgba[..., :3])
     plt.close()
     return data
 
@@ -360,8 +365,12 @@ def plot_spectrogram_to_numpy(spectrogram):
   plt.tight_layout()
 
   fig.canvas.draw()
-  data = np.fromstring(fig.canvas.tostring_rgb(), dtype=np.uint8, sep='')
-  data = data.reshape(fig.canvas.get_width_height()[::-1] + (3,))
+  if hasattr(fig.canvas, "tostring_rgb"):
+    data = np.frombuffer(fig.canvas.tostring_rgb(), dtype=np.uint8)
+    data = data.reshape(fig.canvas.get_width_height()[::-1] + (3,))
+  else:
+    rgba = np.asarray(fig.canvas.buffer_rgba())
+    data = np.ascontiguousarray(rgba[..., :3])
   plt.close()
   return data
 
@@ -389,8 +398,12 @@ def plot_alignment_to_numpy(alignment, info=None):
   plt.tight_layout()
 
   fig.canvas.draw()
-  data = np.fromstring(fig.canvas.tostring_rgb(), dtype=np.uint8, sep='')
-  data = data.reshape(fig.canvas.get_width_height()[::-1] + (3,))
+  if hasattr(fig.canvas, "tostring_rgb"):
+    data = np.frombuffer(fig.canvas.tostring_rgb(), dtype=np.uint8)
+    data = data.reshape(fig.canvas.get_width_height()[::-1] + (3,))
+  else:
+    rgba = np.asarray(fig.canvas.buffer_rgba())
+    data = np.ascontiguousarray(rgba[..., :3])
   plt.close()
   return data
 

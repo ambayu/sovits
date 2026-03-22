@@ -22,3 +22,5 @@ onnxsim
 onnxoptimizer
 tensorboardX
 edge_tts
+inferrvc
+demucs

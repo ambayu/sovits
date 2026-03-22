@@ -1,2 +1,0 @@
-./dataset/44k/Kobo_Kanaeru/1_ACOUSTIC KARAOKEMONETIZATION CELEBRATION_ THANK YOU__ PART 2_____Kobo Kanaeru _ hololive ID zzDtTiE71q0_Vocals_0057.wav
-./dataset/44k/Kobo_Kanaeru/1_ACOUSTIC KARAOKEMONETIZATION CELEBRATION_ THANK YOU__ PART 2_____Kobo Kanaeru _ hololive ID zzDtTiE71q0_Vocals_0377.wav
